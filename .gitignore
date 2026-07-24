@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Playwright browser binaries (installed via `npm install` / postinstall)
+/ms-playwright/
+
+# Logs
+npm-debug.log*
+*.log
+
+# Environment / local config
+.env
+.env.local
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

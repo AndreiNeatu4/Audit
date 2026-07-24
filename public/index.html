@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EU Accessibility Checker — EN 301 549 / WCAG 2.1 AA</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>EU Accessibility Checker</h1>
+    <p class="tagline">
+      Checks a web page against the <strong>European Accessibility Act — Directive (EU) 2019/882</strong>
+      (CELEX 32019L0882). Requirements are grouped under the directive's four principles —
+      <strong>perceivable, operable, understandable, robust</strong> — and verified via the harmonised
+      standard <strong>EN 301 549 → WCAG 2.1 Level A + AA</strong>.
+    </p>
+    <p class="legal-note">
+      <strong>Article 15 (Presumption of conformity):</strong> a website conforming to EN 301 549 is
+      <em>presumed</em> to conform to the directive's accessibility requirements (Annex I).
+    </p>
+  </header>
+
+  <main>
+    <form id="scan-form" class="scan-box">
+      <label for="url" class="sr-only">Website URL</label>
+      <div class="input-row">
+        <input
+          id="url"
+          name="url"
+          type="text"
+          placeholder="Enter a website URL, e.g. example.com"
+          autocomplete="url"
+          required
+        />
+        <button type="submit" id="scan-btn">Check accessibility</button>
+      </div>
+
+      <details class="profiles">
+        <summary>Screen resolutions &amp; DPI to test <span id="profiles-count"></span></summary>
+        <div id="profiles-list" class="profiles-list"><!-- filled by JS --></div>
+        <p class="hint">A requirement is marked <strong>Fail</strong> if it fails at any selected resolution.</p>
+      </details>
+    </form>
+
+    <section id="status" class="status" hidden></section>
+
+    <section id="results" class="results" hidden>
+      <div class="scan-meta">
+        <div>
+          <h2 id="scanned-url"></h2>
+          <p id="scanned-info" class="muted"></p>
+        </div>
+      </div>
+
+      <div id="summary" class="summary"></div>
+
+      <h3 class="section-label">By principle (Annex I — perceivable, operable, understandable, robust)</h3>
+      <div id="principle-summary" class="principle-summary"></div>
+
+      <div class="filters" id="filters">
+        <button type="button" data-filter="all" class="active">All</button>
+        <button type="button" data-filter="fail">Fails</button>
+        <button type="button" data-filter="manual">Manual review</button>
+        <button type="button" data-filter="pass">Passes</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="checklist">
+          <thead>
+            <tr>
+              <th>Result</th>
+              <th>WCAG</th>
+              <th>EN 301 549</th>
+              <th>Requirement</th>
+              <th>Level</th>
+            </tr>
+          </thead>
+          <tbody id="checklist-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="disclaimer">
+      <h3>How to read these results</h3>
+      <ul>
+        <li><span class="badge pass">Pass</span> An automated test found no problem for this requirement.</li>
+        <li><span class="badge fail">Fail</span> An automated test detected a violation. Click the row for the exact elements.</li>
+        <li><span class="badge manual">Manual review</span> This requirement can't be fully judged by a machine — a person must verify it.</li>
+      </ul>
+      <p class="muted small">
+        Automated testing (engine: <em>axe-core</em>) can reliably verify roughly 30–50% of WCAG criteria.
+        A clean automated report is <strong>not</strong> a guarantee of legal conformance: Article 15 of the
+        directive grants only a <em>presumption</em> of conformity to sites that meet EN 301 549 in full, so the
+        “Manual review” items still need human checking for compliance with
+        <strong>Directive (EU) 2019/882 (CELEX 32019L0882)</strong>.
+      </p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

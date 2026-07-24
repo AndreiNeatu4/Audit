@@ -1,0 +1,16 @@
+{
+  "name": "eu-accessibility-checker",
+  "version": "0.1.0",
+  "description": "Web tool that checks a URL against the EU accessibility directive (EN 301 549 / WCAG 2.1 AA) and reports pass/fail for every technical requirement.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "playwright install chromium"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "express": "^4.19.2",
+    "playwright": "^1.47.0"
+  }
+}

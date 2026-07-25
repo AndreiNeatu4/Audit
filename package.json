@@ -1,7 +1,7 @@
 {
   "name": "eu-accessibility-checker",
   "version": "0.1.0",
-  "description": "Web tool that checks a URL against the EU accessibility directive (EN 301 549 / WCAG 2.1 AA) and reports pass/fail for every technical requirement.",
+  "description": "Web tool that checks a URL against the EU accessibility directive (EN 301 549 / WCAG 2.2 AA) using axe-core and HTML_CodeSniffer, and reports pass/fail for every technical requirement.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,8 +9,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
     "@axe-core/playwright": "^4.10.0",
     "express": "^4.19.2",
+    "html_codesniffer": "^2.5.1",
     "playwright": "^1.47.0"
   }
 }

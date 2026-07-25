@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EU Accessibility Checker — EN 301 549 / WCAG 2.1 AA</title>
+  <title>EU Accessibility Checker — EN 301 549 / WCAG 2.2 AA</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -13,7 +13,8 @@
       Checks a web page against the <strong>European Accessibility Act — Directive (EU) 2019/882</strong>
       (CELEX 32019L0882). Requirements are grouped under the directive's four principles —
       <strong>perceivable, operable, understandable, robust</strong> — and verified via the harmonised
-      standard <strong>EN 301 549 → WCAG 2.1 Level A + AA</strong>.
+      standard <strong>EN 301 549 → WCAG 2.2 Level A + AA</strong> (the direction of ETSI's draft
+      EN 301 549 V4.1.0, ahead of the WCAG 2.1‑based standard currently in force).
     </p>
     <p class="legal-note">
       <strong>Article 15 (Presumption of conformity):</strong> a website conforming to EN 301 549 is
@@ -61,6 +62,7 @@
       <div class="filters" id="filters">
         <button type="button" data-filter="all" class="active">All</button>
         <button type="button" data-filter="fail">Fails</button>
+        <button type="button" data-filter="ai_suggested">AI-suggested</button>
         <button type="button" data-filter="manual">Manual review</button>
         <button type="button" data-filter="pass">Passes</button>
       </div>
@@ -81,18 +83,30 @@
       </div>
     </section>
 
+    <section id="extra-findings" class="extra-findings" hidden>
+      <h3 class="section-label">Additional recommendations (best practice, not required by the directive)</h3>
+      <p class="muted small">Findings from axe-core's best-practice rule set — good accessibility hygiene, but outside the 55 WCAG 2.2 A/AA success criteria checked above.</p>
+      <div id="extra-findings-list"></div>
+    </section>
+
     <section class="disclaimer">
       <h3>How to read these results</h3>
       <ul>
         <li><span class="badge pass">Pass</span> An automated test found no problem for this requirement.</li>
         <li><span class="badge fail">Fail</span> An automated test detected a violation. Click the row for the exact elements.</li>
+        <li><span class="badge ai_suggested">AI-suggested</span> No rule-based test could check this — a model looked at a screenshot and the page's HTML and gave a <strong>non-binding</strong> best guess. This is never a verified result.</li>
         <li><span class="badge manual">Manual review</span> This requirement can't be fully judged by a machine — a person must verify it.</li>
       </ul>
       <p class="muted small">
-        Automated testing (engine: <em>axe-core</em>) can reliably verify roughly 30–50% of WCAG criteria.
-        A clean automated report is <strong>not</strong> a guarantee of legal conformance: Article 15 of the
-        directive grants only a <em>presumption</em> of conformity to sites that meet EN 301 549 in full, so the
-        “Manual review” items still need human checking for compliance with
+        Automated testing runs <strong>two independent engines</strong> — <em>axe-core</em> and
+        <em>HTML_CodeSniffer</em> — against every page, since different engines catch different issues; a finding
+        from either counts. Together they can reliably verify roughly 30–50% of WCAG criteria — some further
+        criteria may carry an <strong>AI-suggested</strong> hint when enabled, but WCAG itself defines many
+        criteria (is this text meaningful, is this the right heading, etc.) in terms of human judgement that
+        <strong>no automated tool, including AI, can certify</strong>. A clean automated report is
+        <strong>not</strong> a guarantee of legal conformance: Article 15 of the directive grants only a
+        <em>presumption</em> of conformity to sites that meet EN 301 549 in full, so “Manual review” and
+        “AI-suggested” items still need a human to sign off for compliance with
         <strong>Directive (EU) 2019/882 (CELEX 32019L0882)</strong>.
       </p>
     </section>

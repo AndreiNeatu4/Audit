@@ -23,6 +23,12 @@
   </header>
 
   <main>
+    <div class="mode-tabs" id="mode-tabs" role="tablist">
+      <button type="button" data-mode="single" class="active" role="tab" aria-selected="true">Single page</button>
+      <button type="button" data-mode="crawl" role="tab" aria-selected="false">Crawl site</button>
+    </div>
+
+    <div id="single-mode">
     <form id="scan-form" class="scan-box">
       <label for="url" class="sr-only">Website URL</label>
       <div class="input-row">
@@ -88,6 +94,56 @@
       <p class="muted small">Findings from axe-core's best-practice rule set — good accessibility hygiene, but outside the 55 WCAG 2.2 A/AA success criteria checked above.</p>
       <div id="extra-findings-list"></div>
     </section>
+    </div>
+
+    <div id="crawl-mode" hidden>
+    <form id="crawl-form" class="scan-box">
+      <label for="crawl-url" class="sr-only">Website URL to crawl</label>
+      <div class="input-row">
+        <input
+          id="crawl-url"
+          name="crawl-url"
+          type="text"
+          placeholder="Enter a starting URL, e.g. example.com"
+          autocomplete="url"
+          required
+        />
+        <button type="submit" id="crawl-start-btn">Start crawl</button>
+        <button type="button" id="crawl-stop-btn" hidden>Stop</button>
+      </div>
+
+      <div class="crawl-limits">
+        <label>Max pages
+          <input id="crawl-max-pages" type="number" min="1" max="200" value="20" />
+        </label>
+        <label>Max link depth
+          <input id="crawl-max-depth" type="number" min="0" max="5" value="2" />
+        </label>
+      </div>
+      <p class="hint">
+        Follows same-origin links breadth-first (respecting <code>robots.txt</code>), running the full
+        accessibility scan on every discovered page, up to the limits above.
+      </p>
+
+      <details class="profiles">
+        <summary>Screen resolutions &amp; DPI to test <span id="crawl-profiles-count"></span></summary>
+        <div id="crawl-profiles-list" class="profiles-list"><!-- filled by JS --></div>
+        <p class="hint">Applied to every page in the crawl — fewer resolutions means a faster crawl.</p>
+      </details>
+    </form>
+
+    <section id="crawl-status" class="status" hidden></section>
+
+    <section id="crawl-results" class="results" hidden>
+      <div class="scan-meta">
+        <div>
+          <h2>Pages scanned <span id="crawl-page-count" class="muted small"></span></h2>
+        </div>
+      </div>
+      <div id="crawl-pages" class="crawl-pages"></div>
+      <div id="crawl-summary" class="crawl-summary" hidden></div>
+    </section>
+    </div>
 
     <section class="disclaimer">
       <h3>How to read these results</h3>

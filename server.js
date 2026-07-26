@@ -3,6 +3,7 @@
 const path = require('path');
 const express = require('express');
 const { analyzeUrl, PROFILES } = require('./lib/analyze');
+const { crawlSite } = require('./lib/crawl');
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,47 @@ app.post('/api/scan', async (req, res) => {
   } catch (err) {
     console.error('Scan failed:', err);
     res.status(500).json({ error: err.message || 'Scan failed.' });
+  }
+});
+
+// Crawl a whole site (same-origin, breadth-first) and stream per-page scan
+// results as Server-Sent Events, since a multi-page crawl can take minutes.
+app.get('/api/crawl', async (req, res) => {
+  const { url, maxPages, maxDepth, profiles } = req.query;
+  if (!url) return res.status(400).json({ error: 'A URL is required.' });
+
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache, no-transform',
+    Connection: 'keep-alive',
+    'X-Accel-Buffering': 'no',
+  });
+  const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+  const heartbeat = setInterval(() => res.write(':\n\n'), 15000);
+
+  let aborted = false;
+  req.on('close', () => {
+    aborted = true;
+    clearInterval(heartbeat);
+  });
+
+  try {
+    await crawlSite(
+      url,
+      {
+        maxPages: Math.max(1, Math.min(200, parseInt(maxPages, 10) || 20)),
+        maxDepth: Math.max(0, Math.min(5, parseInt(maxDepth, 10) || 2)),
+        profiles: profiles ? String(profiles).split(',').filter(Boolean) : undefined,
+        isAborted: () => aborted,
+      },
+      send
+    );
+  } catch (err) {
+    console.error('Crawl failed:', err);
+    if (!aborted) send('error', { message: err.message || 'Crawl failed.' });
+  } finally {
+    clearInterval(heartbeat);
+    res.end();
   }
 });
 

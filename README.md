@@ -48,6 +48,30 @@ covering the older WCAG 2.1 baseline.
   the UI under "Additional recommendations", not counted in the pass/fail totals.
 - **Frontend** (`public/`): plain HTML/JS — a URL box and a full checklist table.
 
+### Crawl an entire site
+
+The **"Crawl site"** tab (`lib/crawl.js` + `GET /api/crawl`) runs the same full scan across
+every page it can reach from a starting URL, not just one:
+
+- Discovers links by reading `<a href>` on each page it scans (via the same loaded-page
+  Playwright context, no extra page loads) and follows **same-origin** links
+  **breadth-first**, skipping non-HTML file types (images, PDFs, stylesheets, etc.).
+- Respects `robots.txt` (`Disallow` rules for `User-agent: *`) — best-effort, fails open if
+  `robots.txt` can't be fetched.
+- Bounded by **Max pages** (default 20) and **Max link depth** (default 2) set in the UI, so
+  a crawl can't run away on a large site.
+- Reuses **one Chromium instance** across the whole crawl (`analyzePageWithBrowser` in
+  `lib/analyze.js`) instead of relaunching a browser per page.
+- Streams results as they complete via **Server-Sent Events** (`GET /api/crawl`, since
+  `EventSource` requires GET) — the UI shows each page's pass/fail/manual counts as soon as
+  it's scanned, with the full per-criterion table expandable per page, rather than blocking on
+  a spinner until the entire crawl finishes.
+- Produces a **site-wide summary**: totals across every page × criterion, and a
+  "criteria failing on the most pages" ranking — useful for prioritising fixes that recur
+  across templates (e.g. a shared header/footer issue) over one-off page content problems.
+- Closing the browser tab (client disconnect) aborts the crawl server-side rather than
+  continuing to scan pages nobody is watching.
+
 ### AI-assisted review (optional, off by default)
 
 Some criteria are inherently judgement calls no rule engine can decide — e.g. "is
@@ -92,7 +116,10 @@ accessibility category** (skipped because it wraps a subset of axe-core rules, s
 it adds a score but little genuinely new detection beyond what's already covered
 here). **Guidepup** (screen-reader automation for NVDA/VoiceOver) could turn a few
 more currently-manual criteria (e.g. focus order, name/role/value edge cases) into
-real automated passes/fails, at the cost of much slower, heavier scans.
+real automated passes/fails, at the cost of much slower, heavier scans. **Cross-page
+consistency checks** (e.g. WCAG 3.2.3 Consistent Navigation, 3.2.4 Consistent
+Identification) are still reported per-page/manual by the crawler — comparing nav
+structure across all crawled pages could turn those into real automated results too.
 
 ## Setup (Windows / PowerShell)
 
@@ -108,6 +135,6 @@ Then open <http://localhost:3000> and paste a URL.
 - **More screen profiles / DPIs:** edit `PROFILES` in `lib/analyze.js`.
 - **More detail per criterion:** the axe `passes` / `incomplete` / `violations`
   are already aggregated in `lib/analyze.js`.
-- **Multi-page crawl, PDF export, scheduled scans, screenshots per resolution:**
-  the backend returns structured JSON from `/api/scan`, so any of these can be
-  layered on without touching the analysis core.
+- **PDF export, scheduled scans, screenshots per resolution:** the backend
+  returns structured JSON from `/api/scan` and `/api/crawl`, so any of these
+  can be layered on without touching the analysis core.
